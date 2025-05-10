@@ -1,0 +1,30 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>마비노기 모바일 할 일 관리</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>마비노기 모바일 할 일</h1>
+  </header>
+
+  <main>
+    <form id="todo-form">
+      <input type="text" id="todo-input" placeholder="할 일을 입력하세요" required />
+      <select id="task-type">
+        <option value="daily">일간</option>
+        <option value="weekly">주간</option>
+      </select>
+      <button type="submit">추가</button>
+    </form>
+
+    <section id="todo-list"></section>
+  </main>
+
+  <script defer src="app.js"></script>
+</body>
+</html>
