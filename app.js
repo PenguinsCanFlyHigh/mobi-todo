@@ -11,41 +11,30 @@ function saveTasks() {
   localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
-// 렌더링: 일간 → 주간 순으로
-function renderTasks() {
-  list.innerHTML = '';
-
-  // 일간 그룹
-  const dailyTasks = tasks.filter(t => t.type === 'daily');
-  const h2Daily = document.createElement('h2');
-  h2Daily.textContent = '일간 할 일';
-  list.appendChild(h2Daily);
-  dailyTasks.forEach(task => renderItem(task));
-
-  // 주간 그룹
-  const weeklyTasks = tasks.filter(t => t.type === 'weekly');
-  const h2Weekly = document.createElement('h2');
-  h2Weekly.textContent = '주간 할 일';
-  list.appendChild(h2Weekly);
-  weeklyTasks.forEach(task => renderItem(task));
-}
-
-// 개별 아이템 생성 공통 함수
+// 개별 아이템 생성
 function renderItem(task) {
   const item = document.createElement('div');
   item.className = 'todo-item';
   if (task.completed) item.classList.add('completed');
 
-  const text = document.createElement('span');
-  text.className = 'text';
-  text.textContent = task.text;
-  text.addEventListener('click', () => {
-    task.completed = !task.completed;
+  // 체크박스
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.checked = task.completed;
+  checkbox.addEventListener('change', () => {
+    task.completed = checkbox.checked;
     saveTasks();
     renderTasks();
   });
+  item.appendChild(checkbox);
+
+  // 텍스트
+  const text = document.createElement('span');
+  text.className = 'text';
+  text.textContent = task.text;
   item.appendChild(text);
 
+  // 삭제 버튼
   const delBtn = document.createElement('button');
   delBtn.className = 'delete';
   delBtn.textContent = '삭제';
@@ -59,6 +48,25 @@ function renderItem(task) {
   list.appendChild(item);
 }
 
+// 렌더링: 일간 → 주간 → 기타 순서
+function renderTasks() {
+  list.innerHTML = '';
+
+  const order = [
+    { type: 'daily',   label: '일간 할 일' },
+    { type: 'weekly',  label: '주간 할 일' },
+    { type: 'other',   label: '기타 할 일' }
+  ];
+
+  order.forEach(group => {
+    const groupTasks = tasks.filter(t => t.type === group.type);
+    const h2 = document.createElement('h2');
+    h2.textContent = group.label;
+    list.appendChild(h2);
+    groupTasks.forEach(renderItem);
+  });
+}
+
 // 폼 제출 핸들러
 form.addEventListener('submit', e => {
   e.preventDefault();
@@ -68,7 +76,7 @@ form.addEventListener('submit', e => {
   tasks.push({
     id: Date.now(),
     text,
-    type: typeSelect.value, // 일간 또는 주간
+    type: typeSelect.value,
     completed: false
   });
   saveTasks();
@@ -76,5 +84,5 @@ form.addEventListener('submit', e => {
   input.value = '';
 });
 
-// 초기 표시
+// 초기 렌더
 renderTasks();
